@@ -1,85 +1,32 @@
 [HttpPost("CategoryUsers")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(401)]
-    [ProducesResponseType(500)]
-    [MustHavePermission(FSHAction.Search, FSHResource.Categories)]
-    [OpenApiOperation("Search Users By CategoryIds using available filters.", "")]
-    public Task<PaginationResponse<UsersOnCategoryDto>> SearchAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-    {
-        return _userService.SearchCategoryUsersAsync(request, cancellationToken);
-    }
-
-
-    using System.Security.Claims;
-using System.Text;
-using CQ.UserService.Application.Common.Exceptions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-
-namespace CQ.UserService.Infrastructure.Auth.Jwt;
-
-internal static class Startup
+[ProducesResponseType(200)]
+[ProducesResponseType(404)]
+[ProducesResponseType(400)]
+[ProducesResponseType(401)] // Ensure proper status codes for authentication errors
+[ProducesResponseType(500)]
+[Authorize] // Use the [Authorize] attribute for authentication
+[MustHavePermission(FSHAction.Search, FSHResource.Categories)]
+[OpenApiOperation("Search Users By CategoryIds using available filters.", "")]
+public async Task<IActionResult> SearchAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
 {
-    internal static IServiceCollection AddJwtAuth(this IServiceCollection services, IConfiguration config)
+    try
     {
-        services.Configure<JwtSettings>(config.GetSection($"SecuritySettings:{nameof(JwtSettings)}"));
-        var jwtSettings = config.GetSection($"SecuritySettings:{nameof(JwtSettings)}").Get<JwtSettings>();
-        if (string.IsNullOrEmpty(jwtSettings.Key))
-            throw new InvalidOperationException("No Key defined in JwtSettings config.");
-        byte[] key = Encoding.ASCII.GetBytes(jwtSettings.Key);
+        // Your custom authorization logic (MustHavePermission) should be executed here.
 
-        return services
-            .AddAuthentication(authentication =>
-            {
-                authentication.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                authentication.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(bearer =>
-            {
-                bearer.RequireHttpsMetadata = false;
-                bearer.SaveToken = true;
-                bearer.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ValidateAudience = false,
-                    RoleClaimType = ClaimTypes.Role,
-                    ClockSkew = TimeSpan.Zero
-                };
-                bearer.Events = new JwtBearerEvents
-                {
-                    OnChallenge = context =>
-                    {
-                        context.HandleResponse();
-                        if (!context.Response.HasStarted)
-                        {
-                            throw new UnauthorizedException("Authentication Failed.");
-                        }
-
-                        return Task.CompletedTask;
-                    },
-                    OnForbidden = _ => throw new ForbiddenException("You are not authorized to access this resource."),
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            context.HttpContext.Request.Path.StartsWithSegments("/notifications"))
-                        {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
-                        }
-
-                        return Task.CompletedTask;
-                    }
-                };
-            })
-            .Services;
+        // If you reach this point, the user is authenticated and authorized.
+        var result = await _userService.SearchCategoryUsersAsync(request, cancellationToken);
+        return Ok(result);
+    }
+    catch (UnauthorizedAccessException)
+    {
+        return Unauthorized("Authentication Failed."); // Provide a more detailed error message.
+    }
+    catch (ForbiddenAccessException)
+    {
+        return Forbid("You are not authorized to access this resource."); // Provide a more detailed error message.
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, "An error occurred: " + ex.Message); // Handle other exceptions accordingly.
     }
 }
