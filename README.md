@@ -30,7 +30,7 @@ public class BaseFilter
 {
   "advancedSearch": {
     "fields": [
-      "field1
+      "field1"
     ],
     "keyword": "search item"
   },
@@ -38,9 +38,13 @@ public class BaseFilter
   "pageNumber": 10,
   "pageSize": 20,
   "orderBy": [
-    {"column1","column1"}
+    "column1",
+    "column2"   // Add more columns as needed
   ],
   "categoryIds": [
-    {"id=1","id=2"}
+    "id=1",
+    "id=2",
+    "id=3"       // Add more category IDs as needed
   ]
 }
+
