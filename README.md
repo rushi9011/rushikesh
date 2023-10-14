@@ -47,4 +47,6 @@ public class BaseFilter
     "id=3"       // Add more category IDs as needed
   ]
 }
+"categoryIds": ["e0e099d6-47c3-42a9-9c7c-9c8ebe2b3ac1", "9edffa86-7263-475d-b186-e568de8b6e7e"]
+
 
