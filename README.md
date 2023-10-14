@@ -27,3 +27,20 @@ public class BaseFilter
     /// </summary>
     public string? Keyword { get; set; }
  public List<DefaultIdType> CategoryIds { get; set; } = default!;
+{
+  "advancedSearch": {
+    "fields": [
+      "field1
+    ],
+    "keyword": "search item"
+  },
+  "keyword": "search item",
+  "pageNumber": 10,
+  "pageSize": 20,
+  "orderBy": [
+    {"column1","column1"}
+  ],
+  "categoryIds": [
+    {"id=1","id=2"}
+  ]
+}
