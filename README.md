@@ -91,3 +91,13 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
     }
 	
 	 Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+
+public class UsersOnCategoryDto : IDto
+{
+    public string UserId { get; set; } = default!;
+    public string? UserName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Email { get; set; }
+
+}
