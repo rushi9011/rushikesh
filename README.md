@@ -185,53 +185,95 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
 
 
 
-public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-{
-    // Query to get user categories based on provided CategoryIds
-    var userCategoriesQuery = _db.UserCategory
-        .Where(x => request.CategoryIds.Contains(x.CategoryId))
-        .AsNoTracking();
+public async Task<PaginationResponse<UserDetailsDto>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken)
+    {
+        var spec = new EntitiesByPaginationFilterSpec<ApplicationUser>(filter);
 
-    // Retrieve users with user category data
-    var usersWithCategories = await userCategoriesQuery
-        .GroupBy(x => x.UserId)
-        .Select(g => new
+        var users = await _userManager.Users
+            .WithSpecification(spec)
+            .ProjectToType<UserDetailsDto>()
+            .ToListAsync(cancellationToken);
+
+        int count = await _userManager.Users
+            .CountAsync(cancellationToken);
+
+        return new PaginationResponse<UserDetailsDto>(users, count, filter.PageNumber, filter.PageSize);
+    }
+
+    public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+    {
+        /*int skip = 0;
+        int pageNumber = 1;
+        int pageSize = 10;
+
+        if (request.PageNumber <= 0)
         {
-            UserId = g.Key,
-            Categories = g.ToList()
-        })
-        .ToListAsync(cancellationToken);
-
-    // Query to get user data based on the matching users
-    var userQuery = _userManager.Users
-        .Where(u => usersWithCategories.Any(uc => uc.UserId == u.Id));
-
-    // Fetch the users
-    var users = await userQuery.ToListAsync(cancellationToken);
-
-    // Create UsersOnCategoryDto objects with combined user and user category information
-    var result = usersWithCategories
-        .Select(uc => new UsersOnCategoryDto
+            pageNumber = 1;
+        }
+        else
         {
-            UserId = uc.UserId,
-            UserName = users.First(u => u.Id == uc.UserId).UserName,
-            FirstName = users.First(u => u.Id == uc.UserId).FirstName,
-            LastName = users.First(u => u.Id == uc.UserId).LastName,
-            Email = users.First(u => u.Id == uc.UserId).Email,
-            // Additional properties from UserCategory, e.g., CategoryIds
-            // CategoryIds = uc.Categories.Select(c => c.CategoryId.ToString()).ToList()
-        })
-        .ToList();
+            pageNumber = request.PageNumber;
+        }
 
-    // Total user count
-    int usersCount = result.Count;
+        if (request.PageSize <= 0)
+        {
+            pageSize = 10;
+        }
+        else
+        {
+            pageSize = request.PageSize;
+        }
 
-    // You can add pagination here if needed
-    /*
-    int skip = (request.PageNumber - 1) * request.PageSize;
-    var paginatedResult = result.Skip(skip).Take(request.PageSize).ToList();
-    return new PaginationResponse<UsersOnCategoryDto>(paginatedResult, usersCount, request.PageNumber, request.PageSize);
-    */
+        if (request.PageNumber > 1)
+        {
+            skip = (pageNumber - 1) * pageSize;
+        }*/
 
-    return new PaginationResponse<UsersOnCategoryDto>(result, usersCount, request.PageNumber, request.PageSize);
-}
+        // return query
+        //    .Take(filter.PageSize)
+        //    .OrderBy(filter.OrderBy);
+
+        var usersList =
+            await _db.UserCategory
+            .AsNoTracking()
+            .Where(x => request.CategoryIds.Contains(x.CategoryId))
+            .ProjectToType<UsersOnCategoryDto>()
+            .GroupBy(x => x.UserId)
+            .Select(x => x.First())
+            .ToListAsync(cancellationToken);
+
+        /*usersList =
+              usersList
+              .Take(pageSize)
+              .Skip(skip);*/
+
+        /*if (request.OrderBy != null)
+        {
+            if (request.OrderBy.Contains("firstname"))
+            {
+                usersList =
+                        usersList
+                        .Take(pageSize)
+                        .Skip(skip)
+                        .OrderBy(x => x.);
+            }
+        }
+        else
+        {
+        }*/
+
+        var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
+
+        var list = usersList.Select(x => new UsersOnCategoryDto
+        {
+            UserId = x.UserId,
+            UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
+            FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
+            LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
+            Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
+        }).ToList();
+
+        int usersListCount = usersList.Count();
+
+        return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
+    }
