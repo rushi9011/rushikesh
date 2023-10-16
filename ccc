@@ -1,0 +1,29 @@
+public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+{
+    var usersList =
+        await _db.UserCategory
+        .AsNoTracking()
+        .Where(x => request.CategoryIds.Contains(x.CategoryId))
+        .ProjectToType<UsersOnCategoryDto>()
+        .GroupBy(x => x.UserId)
+        .Select(x => x.First())
+        .ToListAsync(cancellationToken);
+
+    var userIds = usersList.Select(x => x.UserId).ToList();
+
+    var users = _userManager.Users
+        .Where(u => userIds.Contains(u.Id))
+        .Select(u => new UsersOnCategoryDto
+        {
+            UserId = u.Id,
+            UserName = u.UserName,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Email = u.Email
+        })
+        .ToList();
+
+    int usersListCount = usersList.Count();
+
+    return new PaginationResponse<UsersOnCategoryDto>(users, usersListCount, request.PageNumber, request.PageSize);
+}
