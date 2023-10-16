@@ -101,3 +101,23 @@ public class UsersOnCategoryDto : IDto
     public string? Email { get; set; }
 
 }
+
+
+
+
+{
+  "advancedSearch": {
+    "fields": ["field1"],
+    "keyword": "search item"
+  },
+  "keyword": "search item",
+  "pageNumber": 10,
+  "pageSize": 20,
+  "orderBy": ["column1", "column2"],
+  "categoryIds": [
+    "a4c37e44-69b9-4d84-8e10-87724d17a62a",
+    "38efb1cf-103f-498e-8946-929c00f9b879",
+    "7c123573-78a1-4a9b-bc3c-df5f2ce8ed89"
+  ]
+}
+
