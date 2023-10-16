@@ -206,10 +206,6 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
     var userQuery = _userManager.Users
         .Where(u => usersWithCategories.Any(uc => uc.UserId == u.Id));
 
-    // Apply additional filtering, sorting, or pagination if needed
-    // For example, if you want to order the results by a specific property:
-    // userQuery = userQuery.OrderBy(u => u.FirstName);
-
     // Fetch the users
     var users = await userQuery.ToListAsync(cancellationToken);
 
@@ -239,6 +235,3 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
 
     return new PaginationResponse<UsersOnCategoryDto>(result, usersCount, request.PageNumber, request.PageSize);
 }
-
-
-
