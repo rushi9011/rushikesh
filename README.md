@@ -277,3 +277,35 @@ public async Task<PaginationResponse<UserDetailsDto>> SearchAsync(UserListFilter
 
         return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
     }
+
+
+
+
+
+    public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+{
+    var usersList = await _db.UserCategory
+        .AsNoTracking()
+        .Where(x => request.CategoryIds.Contains(x.CategoryId))
+        .ProjectToType<UsersOnCategoryDto>()
+        .ToListAsync(cancellationToken);
+
+    var userIds = usersList.Select(x => x.UserId).ToList();
+
+    var users = await _userManager.Users
+        .Where(x => userIds.Contains(x.Id))
+        .ToListAsync(cancellationToken);
+
+    var list = usersList.Select(x => new UsersOnCategoryDto
+    {
+        UserId = x.UserId,
+        FirstName = users.FirstOrDefault(u => u.Id == x.UserId)?.FirstName,
+        LastName = users.FirstOrDefault(u => u.Id == x.UserId)?.LastName,
+        Email = users.FirstOrDefault(u => u.Id == x.UserId)?.Email,
+    }).ToList();
+
+    int usersListCount = list.Count;
+
+    return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
+}
+
