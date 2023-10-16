@@ -121,3 +121,61 @@ public class UsersOnCategoryDto : IDto
   ]
 }
 
+
+
+public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+{
+    // Query to get user categories based on provided CategoryIds
+    var userCategoriesQuery = _db.UserCategory
+        .Where(x => request.CategoryIds.Contains(x.CategoryId))
+        .AsNoTracking();
+
+    // Retrieve users with user category data
+    var usersWithCategories = await userCategoriesQuery
+        .GroupBy(x => x.UserId)
+        .Select(g => new
+        {
+            UserId = g.Key,
+            Categories = g.ToList()
+        })
+        .ToListAsync(cancellationToken);
+
+    // Query to get user data based on the matching users
+    var userQuery = _userManager.Users
+        .Where(u => usersWithCategories.Any(uc => uc.UserId == u.Id));
+
+    // Apply additional filtering, sorting, or pagination if needed
+    // For example, if you want to order the results by a specific property:
+    // userQuery = userQuery.OrderBy(u => u.FirstName);
+
+    // Fetch the users
+    var users = await userQuery.ToListAsync(cancellationToken);
+
+    // Create UsersOnCategoryDto objects with combined user and user category information
+    var result = usersWithCategories
+        .Select(uc => new UsersOnCategoryDto
+        {
+            UserId = uc.UserId,
+            UserName = users.First(u => u.Id == uc.UserId).UserName,
+            FirstName = users.First(u => u.Id == uc.UserId).FirstName,
+            LastName = users.First(u => u.Id == uc.UserId).LastName,
+            Email = users.First(u => u.Id == uc.UserId).Email,
+            // Additional properties from UserCategory, e.g., CategoryIds
+            // CategoryIds = uc.Categories.Select(c => c.CategoryId.ToString()).ToList()
+        })
+        .ToList();
+
+    // Total user count
+    int usersCount = result.Count;
+
+    // You can add pagination here if needed
+    /*
+    int skip = (request.PageNumber - 1) * request.PageSize;
+    var paginatedResult = result.Skip(skip).Take(request.PageSize).ToList();
+    return new PaginationResponse<UsersOnCategoryDto>(paginatedResult, usersCount, request.PageNumber, request.PageSize);
+    */
+
+    return new PaginationResponse<UsersOnCategoryDto>(result, usersCount, request.PageNumber, request.PageSize);
+}
+
+
