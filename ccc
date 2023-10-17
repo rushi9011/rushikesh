@@ -9,19 +9,17 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
         .Select(x => x.First())
         .ToListAsync(cancellationToken);
 
-    var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
+    // Fetch user data from UserManager
+    var userIds = usersList.Select(u => u.UserId).ToList();
+    var users = await _userManager.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
 
     var list = usersList.Select(x => new UsersOnCategoryDto
     {
         UserId = x.UserId,
-        UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
-        FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
-        LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
-        Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
-        // You can include UserCategory properties here
-        UserCategoryProperty1 = x.UserCategoryProperty1,
-        UserCategoryProperty2 = x.UserCategoryProperty2,
-        // Add other UserCategory properties as needed
+        UserName = users.FirstOrDefault(u => u.Id == x.UserId)?.UserName,
+        FirstName = users.FirstOrDefault(u => u.Id == x.UserId)?.FirstName,
+        LastName = users.FirstOrDefault(u => u.Id == x.UserId)?.LastName,
+        Email = users.FirstOrDefault(u => u.Id == x.UserId)?.Email,
     }).ToList();
 
     int usersListCount = usersList.Count();
