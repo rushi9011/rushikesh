@@ -18,13 +18,12 @@ public DefaultIdType UserId { get; set; } = default!;
   "parentCategoryId": "string"
 }
 
-
 {
-  "userId": "12345",
-  "categoryId": "11223344-5566-7788-99AA-BBCCDDEEFF00",
+  "userId": "d9e43051-1b59-4f6b-9a3c-d5b156fde5aa",
+  "categoryId": "67890",
   "categoryName": "Sample Category",
   "categoryCode": "ABC123",
-  "parentCategoryId": "AABBCCDD-1234-5678-99AA-EEFF00112233"
+  "parentCategoryId": "45678"
 }
 
 
