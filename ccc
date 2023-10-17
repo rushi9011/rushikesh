@@ -7,3 +7,13 @@ public DefaultIdType UserId { get; set; } = default!;
     public string CategoryName { get; set; } = default!;
     public string CategoryCode { get; set; } = default!;
     public DefaultIdType? ParentCategoryId { get; set; }
+
+
+
+{
+  "userId": "string",
+  "categoryId": "string",
+  "categoryName": "string",
+  "categoryCode": "string",
+  "parentCategoryId": "string"
+}
