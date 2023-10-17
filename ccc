@@ -20,7 +20,7 @@ public DefaultIdType UserId { get; set; } = default!;
   "parentCategoryId": "invalid-guid-string"
 }
 
-
+ "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.parentCategoryId | LineNumber: 5 | BytePositionInLine: 41."
 
 
 global using DefaultIdType = global::System.Guid;
