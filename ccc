@@ -26,4 +26,6 @@ public DefaultIdType UserId { get; set; } = default!;
   "parentCategoryId": "45678"
 }
 
+global using DefaultIdType = global::System.Guid;
+
 
