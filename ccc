@@ -9,21 +9,22 @@ public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsy
         .Select(x => x.First())
         .ToListAsync(cancellationToken);
 
-    var userIds = usersList.Select(x => x.UserId).ToList();
+    var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
 
-    var users = _userManager.Users
-        .Where(u => userIds.Contains(u.Id))
-        .Select(u => new UsersOnCategoryDto
-        {
-            UserId = u.Id,
-            UserName = u.UserName,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Email = u.Email
-        })
-        .ToList();
+    var list = usersList.Select(x => new UsersOnCategoryDto
+    {
+        UserId = x.UserId,
+        UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
+        FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
+        LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
+        Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
+        // You can include UserCategory properties here
+        UserCategoryProperty1 = x.UserCategoryProperty1,
+        UserCategoryProperty2 = x.UserCategoryProperty2,
+        // Add other UserCategory properties as needed
+    }).ToList();
 
     int usersListCount = usersList.Count();
 
-    return new PaginationResponse<UsersOnCategoryDto>(users, usersListCount, request.PageNumber, request.PageSize);
+    return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
 }
