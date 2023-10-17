@@ -21,9 +21,10 @@ public DefaultIdType UserId { get; set; } = default!;
 
 {
   "userId": "12345",
-  "categoryId": "67890",
+  "categoryId": "11223344-5566-7788-99AA-BBCCDDEEFF00",
   "categoryName": "Sample Category",
   "categoryCode": "ABC123",
-  "parentCategoryId": "45678"
+  "parentCategoryId": "AABBCCDD-1234-5678-99AA-EEFF00112233"
 }
+
 
