@@ -22,7 +22,13 @@ public DefaultIdType UserId { get; set; } = default!;
 
  "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.parentCategoryId | LineNumber: 5 | BytePositionInLine: 41."
 
-
+{
+  "userId": "123e4567-e89b-12d3-a456-426655440000",
+  "categoryId": "123e4567-e89b-12d3-a456-426655441111",
+  "categoryName": "Example Category",
+  "categoryCode": "ABC123",
+  "parentCategoryId": "123e4567-e89b-12d3-a456-426655442222"
+}
 global using DefaultIdType = global::System.Guid;
 
 
