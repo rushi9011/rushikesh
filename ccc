@@ -14,7 +14,7 @@ public DefaultIdType UserId { get; set; } = default!;
 
 {
   "userId": "123e4567-e89b-12d3-a456-426655440000",
-  "categoryId": "category123",
+  "categoryId": "123e4567-e89b-12d3-a456-426655441111",
   "categoryName": "Example Category",
   "categoryCode": "ABC123",
   "parentCategoryId": "parentCategory456"
