@@ -17,3 +17,13 @@ public DefaultIdType UserId { get; set; } = default!;
   "categoryCode": "string",
   "parentCategoryId": "string"
 }
+
+
+{
+  "userId": "12345",
+  "categoryId": "67890",
+  "categoryName": "Sample Category",
+  "categoryCode": "ABC123",
+  "parentCategoryId": "45678"
+}
+
