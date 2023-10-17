@@ -19,12 +19,13 @@ public DefaultIdType UserId { get; set; } = default!;
 }
 
 {
-  "userId": "d9e43051-1b59-4f6b-9a3c-d5b156fde5aa",
-  "categoryId": "67890",
-  "categoryName": "Sample Category",
+  "userId": "user123",
+  "categoryId": "category123",
+  "categoryName": "Example Category",
   "categoryCode": "ABC123",
-  "parentCategoryId": "45678"
+  "parentCategoryId": "parentCategory456"
 }
+
 
 global using DefaultIdType = global::System.Guid;
 
