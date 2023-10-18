@@ -45,4 +45,18 @@ global using DefaultIdType = global::System.Guid;
   ]
 }
 
+SELECT TOP 1000 [Id]
+      ,[UserId]
+      ,[CategoryId]
+      ,[CreatedBy]
+      ,[CreatedOn]
+      ,[LastModifiedBy]
+      ,[LastModifiedOn]
+      ,[DeletedOn]
+      ,[DeletedBy]
+      ,[CategoryCode]
+      ,[CategoryName]
+      ,[ParentCategoryId]
+  FROM [UserAdmin].[Identity].[UserCategory]
+
 
