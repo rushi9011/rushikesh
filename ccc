@@ -59,4 +59,8 @@ SELECT TOP 1000 [Id]
       ,[ParentCategoryId]
   FROM [UserAdmin].[Identity].[UserCategory]
 
+DELETE FROM [UserAdmin].[Identity].[UserCategory]
+WHERE [Id] = YourSpecificId;
+
+
 
