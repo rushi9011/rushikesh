@@ -1,509 +1,76 @@
-public DefaultIdType UserId { get; set; } = default!;
+{
+  "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
+  "projectName": "ZJqCxbiNw8yO8F,q9TE71ghMyX",
+  "projectDescription": "test",
+  "startDate": "string",
+  "endDate": "string",
+  "startTime": "string",
+  "endTime": "string",
+  "isActive": true
+}
+
+
+
+
+
+namespace CQ.ProjectManagement.Application.Entities.ProjectEntity.Command;
+public class UpdateProjectRequest : IRequest<StandardApiResponse>
+{
+    /// <summary>
+    /// This is ProjectId.PrimaryKey of Project Table.
+    /// </summary>
+    public DefaultIdType ProjectId { get; set; }
 
     /// <summary>
-    /// CategoryId(Last node) of Category.
+    /// This is ProjectName.
     /// </summary>
-    public DefaultIdType CategoryId { get; set; } = default!;
-    public string CategoryName { get; set; } = default!;
-    public string CategoryCode { get; set; } = default!;
-    public DefaultIdType? ParentCategoryId { get; set; }
+    public string ProjectName { get; set; } = default!;
 
+    /// <summary>
+    /// This is ProjectDescription.
+    /// </summary>
+    public string? ProjectDescription { get; set; } = default!;
 
+    /// <summary>
+    /// This is Project StartDate(yyyy-MM-dd).
+    /// </summary>
+    public string? StartDate { get; set; } = default!;
 
+    /// <summary>
+    /// This is Project EndDate(yyyy-MM-dd).
+    /// </summary>
+    public string? EndDate { get; set; } = default!;
 
+    /// <summary>
+    /// This is Project StartTime(yyyy-MM-dd HH:mm:ss).
+    /// </summary>
+    public string? StartTime { get; set; } = default!;
 
-{
-  "userId": "123e4567-e89b-12d3-a456-426655440000",
-  "categoryId": "123e4567-e89b-12d3-a456-426655441111",
-  "categoryName": "Example Category",
-  "categoryCode": "ABC123",
-  "parentCategoryId": "invalid-guid-string"
+    /// <summary>
+    /// This is Project EndTime(yyyy-MM-dd HH:mm:ss).
+    /// </summary>
+    public string? EndTime { get; set; } = default!;
+
+    /// <summary>
+    /// This is to Update Project as IsActive.
+    /// </summary>
+    public bool IsActive { get; set; } = false;
 }
 
- "The JSON value could not be converted to System.Nullable`1[System.Guid]. Path: $.parentCategoryId | LineNumber: 5 | BytePositionInLine: 41."
-
+public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest, StandardApiResponse>
 {
-  "userId": "123e4567-e89b-12d3-a456-426655440000",
-  "categoryId": "123e4567-e89b-12d3-a456-426655441111",
-  "categoryName": "Example Category",
-  "categoryCode": "ABC123",
-  "parentCategoryId": "123e4567-e89b-12d3-a456-426655442222"
-}
-global using DefaultIdType = global::System.Guid;
-{
-  "advancedSearch": {
-    "fields": ["field1"],
-    "keyword": "search item"
-  },
-  "keyword": "search item",
-  "pageNumber": 10,
-  "pageSize": 20,
-  "orderBy": ["column1", "column2"],
-  "categoryIds": [
-    "e0e099d6-47c3-42a9-9c7c-9c8ebe2b3ac1",
-    "9edffa86-7263-475d-b186-e568de8b6e7e"
-  ]
-}
+    private readonly IProjectManagementService _projectManagementService;
+    private readonly IStringLocalizer<UpdateProjectRequestHandler> _localizer;
 
-SELECT TOP 1000 [Id]
-      ,[UserId]
-      ,[CategoryId]
-      ,[CreatedBy]
-      ,[CreatedOn]
-      ,[LastModifiedBy]
-      ,[LastModifiedOn]
-      ,[DeletedOn]
-      ,[DeletedBy]
-      ,[CategoryCode]
-      ,[CategoryName]
-      ,[ParentCategoryId]
-  FROM [UserAdmin].[Identity].[UserCategory]
-
-DELETE FROM [UserAdmin].[Identity].[UserCategory]
-WHERE [Id] = YourSpecificId;
-
- public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+    public UpdateProjectRequestHandler(IProjectManagementService projectManagementService, IStringLocalizer<UpdateProjectRequestHandler> localizer)
     {
-        /*int skip = 0;
-        int pageNumber = 1;
-        int pageSize = 10;
-
-        if (request.PageNumber <= 0)
-        {
-            pageNumber = 1;
-        }
-        else
-        {
-            pageNumber = request.PageNumber;
-        }
-
-        if (request.PageSize <= 0)
-        {
-            pageSize = 10;
-        }
-        else
-        {
-            pageSize = request.PageSize;
-        }
-
-        if (request.PageNumber > 1)
-        {
-            skip = (pageNumber - 1) * pageSize;
-        }*/
-
-        // return query
-        //    .Take(filter.PageSize)
-        //    .OrderBy(filter.OrderBy);
-
-        var usersList =
-            await _db.UserCategory
-            .AsNoTracking()
-            .Where(x => request.CategoryIds.Contains(x.CategoryId) && x.DeletedBy == null)
-            .ProjectToType<UsersOnCategoryDto>()
-            .GroupBy(x => x.UserId)
-            .Select(x => x.First())
-            .ToListAsync(cancellationToken);
-
-        /*usersList =
-              usersList
-              .Take(pageSize)
-              .Skip(skip);*/
-
-        /*if (request.OrderBy != null)
-        {
-            if (request.OrderBy.Contains("firstname"))
-            {
-                usersList =
-                        usersList
-                        .Take(pageSize)
-                        .Skip(skip)
-                        .OrderBy(x => x.);
-            }
-        }
-        else
-        {
-        }*/
-
-        var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
-
-        var list = usersList.Select(x => new UsersOnCategoryDto
-        {
-            UserId = x.UserId,
-            UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
-            FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
-            LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
-            Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
-            CategoryIds = x.CategoryIds
-        }).ToList();
-
-        int usersListCount = usersList.Count();
-
-        return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
-    }
-
-"data": [
-    {
-      "userId": "123E4567-E89B-12D3-A456-426655440001",
-      "userName": null,
-      "firstName": null,
-      "lastName": null,
-      "email": null,
-      "categoryIds": null
-    }
-
-
-
-
-
-
-
-
-
-
-
-using Ardalis.Specification;
-using Ardalis.Specification.EntityFrameworkCore;
-using CQ.UserService.Application.Common.Caching;
-using CQ.UserService.Application.Common.Events;
-using CQ.UserService.Application.Common.Exceptions;
-using CQ.UserService.Application.Common.FileStorage;
-using CQ.UserService.Application.Common.Interfaces;
-using CQ.UserService.Application.Common.Mailing;
-using CQ.UserService.Application.Common.Models;
-using CQ.UserService.Application.Common.Persistence;
-using CQ.UserService.Application.Common.Specification;
-using CQ.UserService.Application.Entities.SupportTicketEntity.DTOs;
-using CQ.UserService.Application.Identity.Users;
-using CQ.UserService.Application.Identity.Users.UserCategories.DTOs;
-using CQ.UserService.Application.Identity.Users.UserCategories.Query;
-using CQ.UserService.Application.Identity.Users.UserCategories.Specifications;
-using CQ.UserService.Domain.Identity;
-using CQ.UserService.Infrastructure.Auth;
-using CQ.UserService.Infrastructure.Auth.Jwt;
-using CQ.UserService.Infrastructure.Common.Extensions;
-using CQ.UserService.Infrastructure.Mailing;
-using CQ.UserService.Infrastructure.Persistence.Context;
-using CQ.UserService.Shared.Authorization;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Finbuckle.MultiTenant;
-using Mapster;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-
-namespace CQ.UserService.Infrastructure.Identity;
-
-internal partial class UserService : IUserService
-{
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly ApplicationDbContext _db;
-    private readonly IStringLocalizer<UserService> _localizer;
-    private readonly IJobService _jobService;
-    private readonly IMailService _mailService;
-    private readonly MailSettings _mailSettings;
-    private readonly SecuritySettings _securitySettings;
-    private readonly IEmailTemplateService _templateService;
-    private readonly IFileStorageService _fileStorage;
-    private readonly IEventPublisher _events;
-    private readonly ICacheService _cache;
-    private readonly ICacheKeyService _cacheKeys;
-    private readonly ITenantInfo _currentTenant;
-    private readonly JwtSettings _jwtSettings;
-    private IReadRepository<UserCategory> _userCategoryReadRepository;
-
-    public UserService(
-        SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager,
-        RoleManager<ApplicationRole> roleManager,
-        ApplicationDbContext db,
-        IStringLocalizer<UserService> localizer,
-        IJobService jobService,
-        IMailService mailService,
-        IOptions<MailSettings> mailSettings,
-        IEmailTemplateService templateService,
-        IFileStorageService fileStorage,
-        IEventPublisher events,
-        ICacheService cache,
-        ICacheKeyService cacheKeys,
-        ITenantInfo currentTenant,
-        IOptions<SecuritySettings> securitySettings,
-        IOptions<JwtSettings> jwtSettings,
-        IReadRepository<UserCategory> userCategoryReadRepository)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _db = db;
+        _projectManagementService = projectManagementService;
         _localizer = localizer;
-        _jobService = jobService;
-        _mailService = mailService;
-        _mailSettings = mailSettings.Value;
-        _templateService = templateService;
-        _fileStorage = fileStorage;
-        _events = events;
-        _cache = cache;
-        _cacheKeys = cacheKeys;
-        _currentTenant = currentTenant;
-        _securitySettings = securitySettings.Value;
-        _jwtSettings = jwtSettings.Value;
-        _userCategoryReadRepository = userCategoryReadRepository;
     }
 
-    public async Task<PaginationResponse<UserDetailsDto>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken)
+    public async Task<StandardApiResponse> Handle(UpdateProjectRequest request, CancellationToken cancellationToken)
     {
-        var spec = new EntitiesByPaginationFilterSpec<ApplicationUser>(filter);
-
-        var users = await _userManager.Users
-            .WithSpecification(spec)
-            .ProjectToType<UserDetailsDto>()
-            .ToListAsync(cancellationToken);
-
-        int count = await _userManager.Users
-            .CountAsync(cancellationToken);
-
-        return new PaginationResponse<UserDetailsDto>(users, count, filter.PageNumber, filter.PageSize);
+        var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
+        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId], true);
     }
-
-    public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-    {
-        /*int skip = 0;
-        int pageNumber = 1;
-        int pageSize = 10;
-
-        if (request.PageNumber <= 0)
-        {
-            pageNumber = 1;
-        }
-        else
-        {
-            pageNumber = request.PageNumber;
-        }
-
-        if (request.PageSize <= 0)
-        {
-            pageSize = 10;
-        }
-        else
-        {
-            pageSize = request.PageSize;
-        }
-
-        if (request.PageNumber > 1)
-        {
-            skip = (pageNumber - 1) * pageSize;
-        }*/
-
-        // return query
-        //    .Take(filter.PageSize)
-        //    .OrderBy(filter.OrderBy);
-
-        var usersList =
-            await _db.UserCategory
-            .AsNoTracking()
-            .Where(x => request.CategoryIds.Contains(x.CategoryId) && x.DeletedBy == null)
-            .ProjectToType<UsersOnCategoryDto>()
-            .GroupBy(x => x.UserId)
-            .Select(x => x.First())
-            .ToListAsync(cancellationToken);
-
-        /*usersList =
-              usersList
-              .Take(pageSize)
-              .Skip(skip);*/
-
-        /*if (request.OrderBy != null)
-        {
-            if (request.OrderBy.Contains("firstname"))
-            {
-                usersList =
-                        usersList
-                        .Take(pageSize)
-                        .Skip(skip)
-                        .OrderBy(x => x.);
-            }
-        }
-        else
-        {
-        }*/
-
-        var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
-
-        var list = usersList.Select(x => new UsersOnCategoryDto
-        {
-            UserId = x.UserId,
-            UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
-            FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
-            LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
-            Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
-            CategoryIds = x.CategoryIds
-        }).ToList();
-
-        int usersListCount = usersList.Count();
-
-        return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
-    }
-
-    public async Task<bool> ExistsWithNameAsync(string name)
-    {
-        EnsureValidTenant();
-        return await _userManager.FindByNameAsync(name) is not null;
-    }
-
-    public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null)
-    {
-        EnsureValidTenant();
-        return await _userManager.FindByEmailAsync(email.Normalize()) is ApplicationUser user && user.Id != exceptId;
-    }
-
-    public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null)
-    {
-        EnsureValidTenant();
-        return await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber) is ApplicationUser user && user.Id != exceptId;
-    }
-
-    private void EnsureValidTenant()
-    {
-        if (string.IsNullOrWhiteSpace(_currentTenant?.Id))
-        {
-            throw new UnauthorizedException(_localizer["tenant.invalid"]);
-        }
-    }
-
-    public async Task<List<UserDetailsDto>> GetListAsync(CancellationToken cancellationToken) =>
-        (await _userManager.Users
-                .AsNoTracking()
-                .ToListAsync(cancellationToken))
-            .Adapt<List<UserDetailsDto>>();
-
-    public Task<int> GetCountAsync(CancellationToken cancellationToken) =>
-        _userManager.Users.AsNoTracking().CountAsync(cancellationToken);
-
-    public async Task<UserDetailsDto> GetAsync(string userId, CancellationToken cancellationToken)
-    {
-        var user = await _userManager.Users
-            .AsNoTracking()
-            .Where(u => u.Id == userId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        _ = user ?? throw new NotFoundException(_localizer["User Not Found."]);
-
-        return user.Adapt<UserDetailsDto>();
-    }
-
-    public async Task<TicketUserDetails?> GetTicketUserAsync(string userId, CancellationToken cancellationToken)
-    {
-        var user = await _userManager.Users
-            .AsNoTracking()
-            .Where(u => u.Id == userId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return user?.Adapt<TicketUserDetails>();
-    }
-
-    public async Task<List<TicketUserDetails>?> GetTicketUsersAsync(List<string> userIds, CancellationToken cancellationToken)
-    {
-        return (await _userManager.Users
-                   .AsNoTracking().Where(u => userIds.Contains(u.Id))
-                   .ToListAsync(cancellationToken))
-              .Adapt<List<TicketUserDetails>?>();
-    }
-
-    public async Task ToggleStatusAsync(ToggleUserStatusRequest request, CancellationToken cancellationToken)
-    {
-        var user = await _userManager.Users.Where(u => u.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
-
-        _ = user ?? throw new NotFoundException(_localizer["User Not Found."]);
-
-        bool isAdmin = await _userManager.IsInRoleAsync(user, FSHRoles.Admin);
-        if (isAdmin)
-        {
-            throw new ConflictException(_localizer["Administrators Profile's Status cannot be toggled"]);
-        }
-
-        user.IsActive = request.ActivateUser;
-
-        await _userManager.UpdateAsync(user);
-
-        await _events.PublishAsync(new ApplicationUserUpdatedEvent(user.Id));
-    }
-
-    public async Task ToggleEmailStatusAsync(ToggleUserEmailStatusRequest request, CancellationToken cancellationToken)
-    {
-        var user = await _userManager.Users.Where(e => e.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
-        _ = user ?? throw new NotFoundException(_localizer["User Not Found."]);
-
-        bool isAdmin = await _userManager.IsInRoleAsync(user, FSHRoles.Admin);
-        if (isAdmin)
-        {
-            throw new ConflictException(_localizer["AdminiStrators Profile's Status cannot be toggled"]);
-        }
-
-        user.EmailConfirmed = request.ActivateEmail;
-        await _userManager.UpdateAsync(user);
-        await _events.PublishAsync(new ApplicationUserUpdatedEvent(user.Id));
-    }
-
-    public async Task<List<string>> GetUserIdsByPermission(List<string> permissions, CancellationToken cancellationToken)
-    {
-        var userIds = await (from p in _db.RoleClaims
-                             join x in _db.UserRoles on p.RoleId equals x.RoleId
-                             where permissions.Contains(p.ClaimValue)
-                             select x.UserId).Distinct().ToListAsync();
-        return userIds;
-    }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-{
-    var usersList =
-        await _db.UserCategory
-        .AsNoTracking()
-        .Where(x => request.CategoryIds.Contains(x.CategoryId) && x.DeletedBy == null)
-        .ProjectToType<UsersOnCategoryDto>()
-        .ToListAsync(cancellationToken);
-
-    var userIds = usersList.Select(x => x.UserId).ToList();
-
-    var users = await _userManager.Users
-        .Where(u => userIds.Contains(u.Id))
-        .ToListAsync(cancellationToken);
-
-    var list = usersList.Select(x => new UsersOnCategoryDto
-    {
-        UserId = x.UserId,
-        UserName = users.FirstOrDefault(u => u.Id == x.UserId)?.UserName,
-        FirstName = users.FirstOrDefault(u => u.Id == x.UserId)?.FirstName,
-        LastName = users.FirstOrDefault(u => u.Id == x.UserId)?.LastName,
-        Email = users.FirstOrDefault(u => u.Id == x.UserId)?.Email,
-        // Include other properties as needed
-    }).ToList();
-
-    int usersListCount = usersList.Count;
-
-    return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
-}
-
-
-
