@@ -12,65 +12,13 @@
 
 
 
-
-namespace CQ.ProjectManagement.Application.Entities.ProjectEntity.Command;
-public class UpdateProjectRequest : IRequest<StandardApiResponse>
 {
-    /// <summary>
-    /// This is ProjectId.PrimaryKey of Project Table.
-    /// </summary>
-    public DefaultIdType ProjectId { get; set; }
-
-    /// <summary>
-    /// This is ProjectName.
-    /// </summary>
-    public string ProjectName { get; set; } = default!;
-
-    /// <summary>
-    /// This is ProjectDescription.
-    /// </summary>
-    public string? ProjectDescription { get; set; } = default!;
-
-    /// <summary>
-    /// This is Project StartDate(yyyy-MM-dd).
-    /// </summary>
-    public string? StartDate { get; set; } = default!;
-
-    /// <summary>
-    /// This is Project EndDate(yyyy-MM-dd).
-    /// </summary>
-    public string? EndDate { get; set; } = default!;
-
-    /// <summary>
-    /// This is Project StartTime(yyyy-MM-dd HH:mm:ss).
-    /// </summary>
-    public string? StartTime { get; set; } = default!;
-
-    /// <summary>
-    /// This is Project EndTime(yyyy-MM-dd HH:mm:ss).
-    /// </summary>
-    public string? EndTime { get; set; } = default!;
-
-    /// <summary>
-    /// This is to Update Project as IsActive.
-    /// </summary>
-    public bool IsActive { get; set; } = false;
-}
-
-public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest, StandardApiResponse>
-{
-    private readonly IProjectManagementService _projectManagementService;
-    private readonly IStringLocalizer<UpdateProjectRequestHandler> _localizer;
-
-    public UpdateProjectRequestHandler(IProjectManagementService projectManagementService, IStringLocalizer<UpdateProjectRequestHandler> localizer)
-    {
-        _projectManagementService = projectManagementService;
-        _localizer = localizer;
-    }
-
-    public async Task<StandardApiResponse> Handle(UpdateProjectRequest request, CancellationToken cancellationToken)
-    {
-        var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
-        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId], true);
-    }
+  "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
+  "projectName": "ZJqCxbiNw8yO8F,q9TE71ghMyX",
+  "projectDescription": "test",
+  "startDate": "2023-10-21", // Replace with the actual start date in yyyy-MM-dd format
+  "endDate": "2023-10-28",   // Replace with the actual end date in yyyy-MM-dd format
+  "startTime": "2023-10-21 08:00:00", // Replace with the actual start time in yyyy-MM-dd HH:mm:ss format
+  "endTime": "2023-10-28 17:00:00",   // Replace with the actual end time in yyyy-MM-dd HH:mm:ss format
+  "isActive": true
 }
