@@ -202,3 +202,23 @@ public class UpdateProjectRequest : IRequest<StandardApiResponse>
   "isActive": true
 }
 
+
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "traceId": "00-6f5bc3bafcfbb641e5feefa0b876eea8-0db1916017787852-00",
+  "errors": {
+    "EndTime": [
+      "Project EndDate should be in Valid DateTIme Format",
+      "Project EndDate should Not Be PastDate"
+    ],
+    "StartDate": [
+      "Project StartDate should Not Be PastDate"
+    ],
+    "StartTime": [
+      "Project StartDate should Not Be PastDate"
+    ]
+  }
+}
+
