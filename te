@@ -18,26 +18,12 @@ https://userapi.cqtech.in/swagger/index.html#/
 
 {
   "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
-  "projectName": "test-123,"
+  "projectName": "test-123",
   "projectDescription": "test",
-  "startDate": "2023-10-20", 
-  "endDate": "2023-12-31",  
-  "startTime": "2023-10-20 10:34:00", 
-  "endTime": "2023-12-31 5:35:00",  
+  "startDate": "2023-10-20",
+  "endDate": "2023-12-31",
+  "startTime": "2023-10-20 10:34:00",
+  "endTime": "2023-12-31 5:35:00",
   "isActive": true
-}'
-
-{
-  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-  "title": "One or more validation errors occurred.",
-  "status": 400,
-  "traceId": "00-3a66093275e12db4951a32a40f52e7b4-b24ec8fd77dad43b-00",
-  "errors": {
-    "$": [
-      "'\"' is invalid after a value. Expected either ',', '}', or ']'. Path: $ | LineNumber: 3 | BytePositionInLine: 2."
-    ],
-    "request": [
-      "The request field is required."
-    ]
-  }
 }
+
