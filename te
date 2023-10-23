@@ -116,37 +116,41 @@ public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest,
 }
 
 -------------------------------------------------------------------------------------------------------
-public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest, StandardApiResponse>
+[HttpPut]
+[ProducesResponseType(200)]
+[ProducesResponseType(404)]
+[ProducesResponseType(400)]
+[ProducesResponseType(401)]
+[ProducesResponseType(500)]
+[MustHavePermission(FSHAction.Update, FSHResource.Projects)]
+[OpenApiOperation("Update a Project.", "")]
+public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRequest request, DefaultIdType projectId)
 {
-    private readonly IProjectManagementService _projectManagementService;
-    private readonly IStringLocalizer<UpdateProjectRequestHandler> _localizer;
-
-    public UpdateProjectRequestHandler(IProjectManagementService projectManagementService, IStringLocalizer<UpdateProjectRequestHandler> localizer)
+    if (projectId != request.ProjectId)
     {
-        _projectManagementService = projectManagementService;
-        _localizer = localizer;
+        return BadRequest();
     }
 
-    public async Task<StandardApiResponse> Handle(UpdateProjectRequest request, CancellationToken cancellationToken)
+    // Validate the "EndDate"
+    if (!IsValidEndDate(request.EndDate))
     {
-        // Convert "EndDate" from string to DateTime
-        if (!string.IsNullOrEmpty(request.EndDate) && DateTime.TryParse(request.EndDate, out DateTime endDate))
-        {
-            // Check if "EndDate" is in the past
-            if (endDate < DateTime.Now)
-            {
-                // Return a validation error if "EndDate" is in the past
-                return new StandardApiResponse(message: _localizer["Project.EndDateInPast"]);
-            }
-        }
-        else
-        {
-            // Handle the case where "EndDate" is not in a valid DateTime format
-            return new StandardApiResponse(message: _localizer["Project.EndDateInvalidFormat"]);
-        }
-
-        // Continue with the rest of the update logic
-        var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
-        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId]);
+        return BadRequest("Invalid End Date");
     }
+
+    return Ok(await Mediator.Send(request));
+}
+
+private bool IsValidEndDate(string endDate)
+{
+    if (DateTime.TryParse(endDate, out DateTime endDateTime))
+    {
+        // Check if "EndDate" is in the past
+        if (endDateTime < DateTime.Now)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    return false; // Invalid date format
 }
