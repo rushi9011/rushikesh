@@ -94,3 +94,24 @@ public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest,
     }
 }
 
+
+
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "traceId": "00-9cb061914cc480ee46410b9155ac3e1e-4ffbdee90ab84422-00",
+  "errors": {
+    "EndTime": [
+      "Project EndDate should be in Valid DateTIme Format",
+      "Project EndDate should Not Be PastDate"
+    ],
+    "StartDate": [
+      "Project StartDate should Not Be PastDate"
+    ],
+    "StartTime": [
+      "Project StartDate should Not Be PastDate"
+    ]
+  }
+}
+
