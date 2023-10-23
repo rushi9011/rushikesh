@@ -116,6 +116,40 @@ public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest,
 }
 
 -------------------------------------------------------------------------------------------------------
+public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest, StandardApiResponse>
+{
+    private readonly IProjectManagementService _projectManagementService;
+    private readonly IStringLocalizer<UpdateProjectRequestHandler> _localizer;
+
+    public UpdateProjectRequestHandler(IProjectManagementService projectManagementService, IStringLocalizer<UpdateProjectRequestHandler> localizer)
+    {
+        _projectManagementService = projectManagementService;
+        _localizer = localizer;
+    }
+
+    public async Task<StandardApiResponse> Handle(UpdateProjectRequest request, CancellationToken cancellationToken)
+    {
+        // Convert "EndDate" from string to DateTime
+        if (!string.IsNullOrEmpty(request.EndDate) && DateTime.TryParse(request.EndDate, out DateTime endDate))
+        {
+            // Check if "EndDate" is in the past
+            if (endDate < DateTime.Now)
+            {
+                // Return a validation error if "EndDate" is in the past
+                return new StandardApiResponse(message: _localizer["Project.EndDateInPast"], success: false);
+            }
+        }
+        else
+        {
+            // Handle the case where "EndDate" is not in a valid DateTime format
+            return new StandardApiResponse(message: _localizer["Project.EndDateInvalidFormat"], success: false);
+        }
+
+        // Continue with the rest of the update logic
+        var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
+        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId], success: true);
+    }
+}
 
 
 
