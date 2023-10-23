@@ -136,21 +136,17 @@ public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest,
             if (endDate < DateTime.Now)
             {
                 // Return a validation error if "EndDate" is in the past
-                return new StandardApiResponse(message: _localizer["Project.EndDateInPast"], success: false);
+                return new StandardApiResponse(message: _localizer["Project.EndDateInPast"]);
             }
         }
         else
         {
             // Handle the case where "EndDate" is not in a valid DateTime format
-            return new StandardApiResponse(message: _localizer["Project.EndDateInvalidFormat"], success: false);
+            return new StandardApiResponse(message: _localizer["Project.EndDateInvalidFormat"]);
         }
 
         // Continue with the rest of the update logic
         var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
-        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId], success: true);
+        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId]);
     }
 }
-
-
-
-
