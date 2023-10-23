@@ -1,18 +1,4 @@
 https://userapi.cqtech.in/swagger/index.html#/
-{
-  "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
-  "projectName": "test-k,
-  "projectDescription": "test",
-  "startDate": "2023-10-20", 
-  "endDate": "2023-12-31",  
-  "startTime": "2023-10-21 10:34:00", 
-  "endTime": "2023-10-28 5:35:00",  
-  "isActive": true
-}'
-
-"$.projectName": [
-      "'0x0A' is invalid within a JSON string. The string should be correctly escaped. Path: $.projectName | LineNumber: 2 | BytePositionInLine: 25."
-    ]
 
 
 
@@ -25,5 +11,86 @@ https://userapi.cqtech.in/swagger/index.html#/
   "startTime": "2023-10-20 10:34:00",
   "endTime": "2023-12-31 5:35:00",
   "isActive": true
+}
+
+
+
+ [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [MustHavePermission(FSHAction.Update, FSHResource.Projects)]
+    [OpenApiOperation("Update a Project.", "")]
+    public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRequest request, DefaultIdType projectId)
+    {
+
+        return projectId != request.ProjectId
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+
+
+namespace CQ.ProjectManagement.Application.Entities.ProjectEntity.Command;
+public class UpdateProjectRequest : IRequest<StandardApiResponse>
+{
+    /// <summary>
+    /// This is ProjectId.PrimaryKey of Project Table.
+    /// </summary>
+    public DefaultIdType ProjectId { get; set; }
+
+    /// <summary>
+    /// This is ProjectName.
+    /// </summary>
+    public string ProjectName { get; set; } = default!;
+
+    /// <summary>
+    /// This is ProjectDescription.
+    /// </summary>
+    public string? ProjectDescription { get; set; } = default!;
+
+    /// <summary>
+    /// This is Project StartDate(yyyy-MM-dd).
+    /// </summary>
+    public string? StartDate { get; set; } = default!;
+
+    /// <summary>
+    /// This is Project EndDate(yyyy-MM-dd).
+    /// </summary>
+    public string? EndDate { get; set; } = default!;
+
+    /// <summary>
+    /// This is Project StartTime(yyyy-MM-dd HH:mm:ss).
+    /// </summary>
+    public string? StartTime { get; set; } = default!;
+
+    /// <summary>
+    /// This is Project EndTime(yyyy-MM-dd HH:mm:ss).
+    /// </summary>
+    public string? EndTime { get; set; } = default!;
+
+    /// <summary>
+    /// This is to Update Project as IsActive.
+    /// </summary>
+    public bool IsActive { get; set; } = false;
+}
+
+public class UpdateProjectRequestHandler : IRequestHandler<UpdateProjectRequest, StandardApiResponse>
+{
+    private readonly IProjectManagementService _projectManagementService;
+    private readonly IStringLocalizer<UpdateProjectRequestHandler> _localizer;
+
+    public UpdateProjectRequestHandler(IProjectManagementService projectManagementService, IStringLocalizer<UpdateProjectRequestHandler> localizer)
+    {
+        _projectManagementService = projectManagementService;
+        _localizer = localizer;
+    }
+
+    public async Task<StandardApiResponse> Handle(UpdateProjectRequest request, CancellationToken cancellationToken)
+    {
+        var projectId = await _projectManagementService.UpdateProject(request, cancellationToken);
+        return new StandardApiResponse(message: _localizer["Project.UpdatedSuccess", projectId], true);
+    }
 }
 
