@@ -13,3 +13,15 @@ https://userapi.cqtech.in/swagger/index.html#/
 "$.projectName": [
       "'0x0A' is invalid within a JSON string. The string should be correctly escaped. Path: $.projectName | LineNumber: 2 | BytePositionInLine: 25."
     ]
+
+{
+  "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
+  "projectName": "test-k\\,",  // Use a backslash to escape the comma
+  "projectDescription": "test",
+  "startDate": "2023-10-20", 
+  "endDate": "2023-12-31",  
+  "startTime": "2023-10-21 10:34:00", 
+  "endTime": "2023-10-28 5:35:00",  
+  "isActive": true
+}
+
