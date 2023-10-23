@@ -195,12 +195,13 @@ public class UpdateProjectRequest : IRequest<StandardApiResponse>
   "projectId": "258b6076-5cf6-4be6-70f6-08dbd12d2393",
   "projectName": "test-123",
   "projectDescription": "test",
-  "startDate": "2023-10-21", // This is the current date or a future date
-  "endDate": "2023-12-31",
-  "startTime": "2023-10-20 10:34:00",
+  "startDate": "2023-10-21", // A valid date in the future (not in the past)
+  "endDate": "2023-12-31",   // A valid date in the future (not in the past)
+  "startTime": "2023-10-21 10:34:00", // A valid date and time (not in the past)
   "endTime": "2023-12-31 5:35:00",
   "isActive": true
 }
+
 
 
 {
