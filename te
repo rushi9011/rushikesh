@@ -231,3 +231,15 @@ public class UpdateProjectRequest : IRequest<StandardApiResponse>
     "request": [
       "The request field is required."
     ]
+
+
+{
+  "projectName": "test-123",
+  "projectDescription": "test",
+  "startDate": "2023-10-20", 
+  "endDate": "2023-12-31",  
+  "startTime": "2023-10-20 10:34:00", 
+  "endTime": "2023-12-31 5:35:00",  
+  "isActive": true
+}
+
