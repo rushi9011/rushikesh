@@ -259,3 +259,39 @@ public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRe
             : Ok(await Mediator.Send(request));
     }
 
+
+
+---=---=-=-=--------------------uuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+
+
+
+
+public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRequest request, DefaultIdType projectId)
+{
+    // Convert the provided "StartDate" to a DateTime object
+    if (DateTime.TryParse(request.StartDate, out DateTime startDate))
+    {
+        // Get the current date and time
+        DateTime currentDate = DateTime.Now;
+
+        // Compare the provided "StartDate" with the current date
+        int comparisonResult = DateTime.Compare(startDate, currentDate);
+
+        if (comparisonResult < 0)
+        {
+            // "StartDate" is in the past
+            return BadRequest("Project StartDate cannot be a past date.");
+        }
+
+        // Proceed with the update since "StartDate" is valid
+        return projectId != request.ProjectId
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+    else
+    {
+        // Invalid date format
+        return BadRequest("Invalid date format for Project StartDate.");
+    }
+}
+
