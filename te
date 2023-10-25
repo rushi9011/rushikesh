@@ -243,3 +243,19 @@ public class UpdateProjectRequest : IRequest<StandardApiResponse>
   "isActive": true
 }
 
+
+
+public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRequest request, DefaultIdType projectId)
+    {
+        DateTime startDate = Convert.ToDateTime(request.StartDate);
+        DateTime localStartDate = DateTime.Now;
+        int res = DateTime.Compare(startDate, localStartDate);
+        if(res == 1)
+        {
+            Console.WriteLine(startDate.ToString());
+        }
+        return projectId != request.ProjectId
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+
