@@ -285,3 +285,6 @@ public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRe
         ? BadRequest()
         : Ok(await Mediator.Send(request));
 }
+
+
+https://userapi.cqtech.in/swagger/index.html#/
