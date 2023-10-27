@@ -288,3 +288,15 @@ public async Task<ActionResult<StandardApiResponse>> UpdateAsync(UpdateProjectRe
 
 
 https://userapi.cqtech.in/swagger/index.html#/
+
+
+
+
+
+ DateTime startDate = Convert.ToDateTime(request.StartDate);
+        DateTime localStartDate = DateTime.Now;
+        int res = DateTime.Compare(startDate, localStartDate);
+        if(res == 1)
+        {
+            Console.WriteLine(startDate.ToString());
+        }
