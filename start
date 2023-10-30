@@ -1,0 +1,31 @@
+public async Task<DefaultIdType> UpdateProject(UpdateProjectRequest request, CancellationToken cancellationToken)
+{
+    var project = await _projectService.GetProjectById(request.ProjectId, cancellationToken);
+
+    if (project != null)
+    {
+        var currentUtcTime = _currentUserTimeZone.GetUTCDateTime(DateTime.Now, cancellationToken); // Get the current UTC time
+        if (currentUtcTime > project.EndTime)
+        {
+            // Ensure the start time is before the end time
+            throw new ValidationException("Start time cannot be after end time.");
+        }
+
+        project.Update(
+            projectName: request.ProjectName,
+            projectDescription: request.ProjectDescription,
+            startDate: currentUtcTime, // Use the current UTC time
+            endDate: _currentUserTimeZone.GetUTCDateTime(Convert.ToDateTime(request.EndTime), cancellationToken),
+            startTime: currentUtcTime, // Set the start time to the current UTC time
+            endTime: _currentUserTimeZone.GetUTCDateTime(Convert.ToDateTime(request.EndTime), cancellationToken),
+            isActive: request.IsActive);
+
+        await _projectService.EditProject(project, cancellationToken);
+    }
+    else
+    {
+        _ = project ?? throw new NotFoundException(string.Format(_localizer["Project.notfound"], request.ProjectId));
+    }
+
+    return project.Id;
+}
