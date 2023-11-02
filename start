@@ -29,3 +29,34 @@ public async Task<DefaultIdType> UpdateProject(UpdateProjectRequest request, Can
 
     return project.Id;
 }
+
+
+
+
+
+ public DateTime GetUTCDateTime(DateTime dateTime, CancellationToken cancellationToken)
+    {
+        string? timeZoneOffset = _httpContextAccessor.HttpContext!.Request.Headers["TimeZoneOffSet"].ToString();
+
+        int offsetMinutes;
+
+        // Try to parse the input offset string to a number (in minutes)
+        if (!int.TryParse(timeZoneOffset, out offsetMinutes))
+        {
+            // Handle invalid input (e.g. null or non-numeric value) by using server's local time
+            return dateTime;
+        }
+
+        // Calculate the offset timespan based on the input offset value
+        TimeSpan offset = TimeSpan.FromMinutes(offsetMinutes);
+
+        // Get the current local date/time
+       // DateTime localDateTime = DateTime.Now;
+
+        // Apply the offset to the local date/time to get the corresponding UTC date/time
+        DateTime utcDateTime = dateTime;
+
+        // Return the resulting UTC date/time
+        return utcDateTime;
+    }
+
