@@ -90,3 +90,33 @@ remarks: ""
 secondryAttributeDetails: []
 
 userId: "78023cd3-6b8f-4605-96fe-a21a76d25890"
+
+
+
+
+
+
+
+
+{
+  "itemId": "cb2ed70d-efc0-4d8b-bf94-8f7de8404a3f",
+  "itemTitleId": null,
+  "itemTitle": "Q1",
+  "instruction": "",
+  "itemMark": 0,
+  "itemReferenceId": "036ab87e-61bd-4573-7fc1-08dbe0ea5d7c",
+  "itemText": "Hello, World…",
+  "itemType": null,
+  "itemTypeId": "31809012-5198-4841-7e3e-08dbd6088a8e",
+  "languageId": "7ed54625-9ffa-469e-7d73-08dbd6088ab7",
+  "options": [
+    {
+      "optionId": "297784df-d874-47ef-8154-08dbe0ea5dce",
+      "optionText": "",
+      "code": "1",
+      "marks": 0
+    },
+    ...
+  ],
+  "remarks": ""
+}
