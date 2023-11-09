@@ -1,0 +1,92 @@
+{
+  "projectId": "string",
+  "projectItemDetails": {
+    "itemId": "string",
+    "itemTitleId": "string",
+    "itemTitle": "string",
+    "itemText": "string",
+    "itemMark": 0,
+    "instruction": "string",
+    "comprehensionId": "string",
+    "itemTypeId": "string",
+    "languageId": "string",
+    "categoryId": "string",
+    "attributeValueId": "string",
+    "secondryAttributeDetails": [
+      {
+        "categoryId": "string",
+        "attributeValueId": "string"
+      }
+    ],
+    "remarks": "string",
+    "currentItemStepId": "string",
+    "options": [
+      {
+        "optionId": "string",
+        "optionText": "string",
+        "optionCode": "string",
+        "optionMark": 0,
+        "exclusive": true,
+        "lockPosition": true
+      }
+    ]
+  },
+  "userId": "string",
+  "itemStatus": 0
+}
+
+
+
+
+
+----------------------------------------------
+
+itemStatus: 0
+
+projectId: "c6ff6fa5-b899-484d-5b10-08dbd6088a47"
+
+projectItemDetails: {itemId: "cb2ed70d-efc0-4d8b-bf94-8f7de8404a3f", itemTitleId: null, itemTitle: "Q1",…}
+
+attributeValueId: "9a785799-e557-42be-f90e-08dbd6088af1"
+
+categoryId: "8733d393-a64d-44f3-a9db-08dbd6088ac7"
+
+comprehensionId: null
+
+comprehensionText: null
+
+comprehensionTitle: null
+
+currentItemStepId: "b7858c30-3eea-4d39-f086-08dbd6088bb8"
+
+instruction: ""
+
+itemDetailsId: "a5357efe-c794-49cf-dcea-08dbe0ea5dc3"
+
+itemId: "cb2ed70d-efc0-4d8b-bf94-8f7de8404a3f"
+
+itemLanguages: [{itemDetailsId: "a5357efe-c794-49cf-dcea-08dbe0ea5dc3", comprehentionDetailsId: null,…}]
+
+itemMark: 0
+
+itemReferenceId: "036ab87e-61bd-4573-7fc1-08dbe0ea5d7c"
+
+itemText: "Hello, World…"
+
+itemTitle: "Q1"
+
+itemTitleId: null
+
+itemType: null
+
+itemTypeId: "31809012-5198-4841-7e3e-08dbd6088a8e"
+
+languageId: "7ed54625-9ffa-469e-7d73-08dbd6088ab7"
+
+options: [{optionId: "297784df-d874-47ef-8154-08dbe0ea5dce", optionText: "", code: "1", marks: 0,…},…]
+
+remarks: ""
+
+secondryAttributeDetails: []
+
+userId: "78023cd3-6b8f-4605-96fe-a21a76d25890"
