@@ -1,0 +1,108 @@
+ public async Task<StandardApiResponse> CreateWorkFlowItem(CreateItemWorkFlowRequest request, CancellationToken cancellationToken)
+    {
+        if (_currentUser.GetUserId() != request.UserId)
+        {
+            throw new ConflictException(_localizer["ItemUser.UserIdWithLoginUserNotMatched"]);
+        }
+
+        var response = await _workFlowItemService.WorkFlowItem(request);
+
+        if (response.Id != null && response.Id != string.Empty)
+        {
+            DefaultIdType projectItemId = new DefaultIdType(response.Id);
+
+            // Check if projectItemId Exist on ItemDetails and if exist then Update Itemdetails.
+            var spec = new GetItemDetailsByProjectItemIdSpec(projectItemId);
+            var projectItem = await _itemDetailsService.GetItemDetailsBySpec(spec, cancellationToken);
+
+            if (projectItem != null)
+            {
+                // Update Item title.
+                if (request.ProjectItemDetails.ItemTitleId != null && request.ProjectItemDetails.ItemTitle != null)
+                {
+                    var item = await _itemService.GetItemAsync((Guid)request.ProjectItemDetails.ItemTitleId, cancellationToken);
+                    if (item != null)
+                    {
+                        item.Update(request.ProjectItemDetails.ItemTitle);
+                        await _itemService.UpdateItemAsync(item, cancellationToken);
+                    }
+                }
+
+                if (request.ProjectItemDetails.ItemText != null)
+                {
+                    // here ItemToUpdate class is used insted of ItemDetails because two object of same entity conflict in UpdateItemAsync .
+
+                    ItemToUpdate itemUpdate = new ItemToUpdate(
+                    id: projectItem.Id,
+                    itemText: _cryptoService.EncryptAES(request.ProjectItemDetails.ItemText),
+                    instruction: request.ProjectItemDetails.Instruction != null ? request.ProjectItemDetails.Instruction : projectItem.Instruction,
+                    comprehensionId: request.ProjectItemDetails.ComprehensionId != null ? request.ProjectItemDetails.ComprehensionId : projectItem.ComprehensionDetailsId);
+
+                    await _itemDetailsService.UpdateItemAsync(itemUpdate, cancellationToken);
+
+                    // Add or Update options.
+                    await _optionService.UpdateOptionListAsync(request.ProjectItemDetails.Options, projectItem.Id, cancellationToken);
+                }
+            }
+            else
+            {
+                DefaultIdType itemRefId;
+
+                // Save ItemTitle.
+                if (request.ProjectItemDetails.ItemTitleId == null)
+                {
+                    Item item = new Item(request.ProjectItemDetails.ItemTitle, request.ProjectItemDetails.ItemTypeId);
+                    await _itemService.AddItemAsync(item, cancellationToken);
+                    itemRefId = item.Id;
+                }
+                else
+                {
+                    itemRefId = (DefaultIdType)request.ProjectItemDetails.ItemTitleId;
+                }
+
+                // Add Question and Options
+                List<Option> optionList = new List<Option>();
+
+                if (request.ProjectItemDetails.Options != null && request.ProjectItemDetails.Options.Count > 0)
+                {
+                    foreach (var option in request.ProjectItemDetails.Options)
+                    {
+                        var optionAttribute = new OptionAttribute(
+                                marks: option.OptionMark,
+                                exclusive: option.Exclusive,
+                                lockPosition: option.LockPosition);
+
+                        optionList.Add(
+                            new Option(
+                               optionText: _cryptoService.EncryptAES(option.OptionText),
+                               code: option.OptionCode,
+                               optionAttribute: optionAttribute));
+                    }
+                }
+
+                // Save Item.
+                ItemDetails itemDetails = new ItemDetails(
+                    languageId: request.ProjectItemDetails.LanguageId,
+                    projectId: request.ProjectId,
+                    projectItemId: projectItemId,
+                    itemId: itemRefId,
+                    instruction: request.ProjectItemDetails.Instruction,
+                    itemText: _cryptoService.EncryptAES(request.ProjectItemDetails.ItemText),
+                    comprehensionDetailsId: request.ProjectItemDetails.ComprehensionId != null ? request.ProjectItemDetails.ComprehensionId : null,
+                    new ItemAttribute(
+                        marks: request.ProjectItemDetails.ItemMark,
+                        duration: 0,
+                        itemExplanation: null),
+                    options: optionList);
+
+                await _itemDetailsService.AddItemAsync(itemDetails, cancellationToken);
+
+            }
+        }
+        else
+        {
+            return new StandardApiResponse(response.Message, false);
+        }
+
+        return response;
+    }
