@@ -309,3 +309,14 @@ public async Task<PaginationResponse<UserDetailsDto>> SearchAsync(UserListFilter
     return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
 }
 
+
+
+
+ select * from Exam.Language where examid ='DF86A549-1160-444F-78B4-08DBFE0466C1'
+
+  select * from Paper.Paper where examid ='DF86A549-1160-444F-78B4-08DBFE0466C1'
+
+  select * from Paper.Sections  where PaperId = '2DF83295-C5FD-4E90-4511-08DBFE0466E5'
+
+  select * from Paper.Language where PaperId = '2DF83295-C5FD-4E90-4511-08DBFE0466E5'
+
