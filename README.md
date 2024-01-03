@@ -228,5 +228,41 @@ namespace UserApplication.Controllers
 </table>
 
 
+--------------------------------------------------------------------------------------
+
+// Action to display the confirmation page for deleting a page
+public IActionResult Delete(int id)
+{
+    PageSections page = _context.PageSection.Find(id);
+    return View(page);
+}
+
+// Action to handle the deletion of a page
+[HttpPost, ActionName("Delete")]
+public IActionResult DeleteConfirmed(int id)
+{
+    PageSections page = _context.PageSection.Find(id);
+
+    if (page == null)
+    {
+        return NotFound();
+    }
+
+    // Delete the HTML file from the file system
+    string filePath = $"wwwroot/pages/{id}.html";
+    if (System.IO.File.Exists(filePath))
+    {
+        System.IO.File.Delete(filePath);
+    }
+
+    // Remove the page from the database
+    _context.PageSection.Remove(page);
+    _context.SaveChanges();
+
+    return RedirectToAction(nameof(Index));
+}
+
+
+
 
 
