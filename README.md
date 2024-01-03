@@ -263,6 +263,70 @@ public IActionResult DeleteConfirmed(int id)
 }
 
 
+@model YourNamespace.Models.PageSections
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+<h3>Are you sure you want to delete this page?</h3>
+
+<div>
+    <h4>Page Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Header)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Header)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Left)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Left)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Center)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Center)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Right)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Right)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Footer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Footer)
+        </dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
 
 
 
