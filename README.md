@@ -161,4 +161,72 @@ namespace UserApplication.Controllers
 }
 
 
+-----------------------------------------------------------------
+@model IEnumerable<UserApplication.Models.PageSections>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*@{
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+}*@
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Header)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Footer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Center)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Left)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Right)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Header)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Footer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Center)
+                </td>
+                 <td>
+                @Html.DisplayFor(modelItem => item.Left)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Right)
+                </td>
+              
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                   
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+
 
