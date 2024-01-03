@@ -1,322 +1,164 @@
-public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using UserApplication.Data;
+using UserApplication.Migrations;
+using UserApplication.Models;
+using PageSections = UserApplication.Models.PageSections;
+
+namespace UserApplication.Controllers
+{
+    public class PageSectionController : Controller
     {
-        /*int skip = 0;
-        int pageNumber = 1;
-        int pageSize = 10;
 
-        if (request.PageNumber <= 0)
+
+        private readonly UserApplicationContext _context;
+
+        public PageSectionController(UserApplicationContext context)
         {
-            pageNumber = 1;
-        }
-        else
-        {
-            pageNumber = request.PageNumber;
+            _context = context;
         }
 
-        if (request.PageSize <= 0)
+        // GET: Users
+        public async Task<IActionResult> Index()
         {
-            pageSize = 10;
+            return _context.PageSection != null ?
+                        View(await _context.PageSection.ToListAsync()) :
+                        Problem("Entity set 'UserApplicationContext.User'  is null.");
         }
-        else
+
+        // Action to display the form for creating a new page
+        public IActionResult Create()
         {
-            pageSize = request.PageSize;
+            return View();
         }
 
-        if (request.PageNumber > 1)
+        // Action to handle the creation of a new page
+        [HttpPost]
+        public IActionResult Create(PageSections page)
         {
-            skip = (pageNumber - 1) * pageSize;
-        }*/
-
-        // return query
-        //    .Take(filter.PageSize)
-        //    .OrderBy(filter.OrderBy);
-
-        var usersList =
-            await _db.UserCategory
-            .AsNoTracking()
-            .Where(x => request.CategoryIds.Contains(x.CategoryId))
-            .ProjectToType<UsersOnCategoryDto>()
-            .GroupBy(x => x.UserId)
-            .Select(x => x.First())
-            .ToListAsync(cancellationToken);
-
-        /*usersList =
-              usersList
-              .Take(pageSize)
-              .Skip(skip);*/
-
-        /*if (request.OrderBy != null)
-        {
-            if (request.OrderBy.Contains("firstname"))
+            if (ModelState.IsValid)
             {
-                usersList =
-                        usersList
-                        .Take(pageSize)
-                        .Skip(skip)
-                        .OrderBy(x => x.);
+                _context.PageSection.Add(page);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
             }
-        }
-        else
-        {
-        }*/
 
-        var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
-
-        var list = usersList.Select(x => new UsersOnCategoryDto
-        {
-            UserId = x.UserId,
-            UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
-            FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
-            LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
-            Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
-        }).ToList();
-
-        int usersListCount = usersList.Count();
-
-        return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
-    }
-	
-	
-	[HttpPost("CategoryUsers")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(401)]
-    [ProducesResponseType(500)]
-    [MustHavePermission(FSHAction.Search, FSHResource.Categories)]
-    [OpenApiOperation("Search Users By CategoryIds using available filters.", "")]
-    public Task<PaginationResponse<UsersOnCategoryDto>> SearchAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-    {
-        return _userService.SearchCategoryUsersAsync(request, cancellationToken);
-    }
-	
-	 Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-
-public class UsersOnCategoryDto : IDto
-{
-    public string UserId { get; set; } = default!;
-    public string? UserName { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Email { get; set; }
-
-}
-
-
-
-
-{
-  "advancedSearch": {
-    "fields": ["field1"],
-    "keyword": "search item"
-  },
-  "keyword": "search item",
-  "pageNumber": 10,
-  "pageSize": 20,
-  "orderBy": ["column1", "column2"],
-  "categoryIds": [
-    "a4c37e44-69b9-4d84-8e10-87724d17a62a",
-    "38efb1cf-103f-498e-8946-929c00f9b879",
-    "7c123573-78a1-4a9b-bc3c-df5f2ce8ed89"
-  ]
-}
-
-
-
-public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-{
-    // Query to get user categories based on provided CategoryIds
-    var userCategoriesQuery = _db.UserCategory
-        .Where(x => request.CategoryIds.Contains(x.CategoryId))
-        .AsNoTracking();
-
-    // Retrieve users with user category data
-    var usersWithCategories = await userCategoriesQuery
-        .GroupBy(x => x.UserId)
-        .Select(g => new
-        {
-            UserId = g.Key,
-            Categories = g.ToList()
-        })
-        .ToListAsync(cancellationToken);
-
-    // Query to get user data based on the matching users
-    var userQuery = _userManager.Users
-        .Where(u => usersWithCategories.Any(uc => uc.UserId == u.Id));
-
-    // Apply additional filtering, sorting, or pagination if needed
-    // For example, if you want to order the results by a specific property:
-    // userQuery = userQuery.OrderBy(u => u.FirstName);
-
-    // Fetch the users
-    var users = await userQuery.ToListAsync(cancellationToken);
-
-    // Create UsersOnCategoryDto objects with combined user and user category information
-    var result = usersWithCategories
-        .Select(uc => new UsersOnCategoryDto
-        {
-            UserId = uc.UserId,
-            UserName = users.First(u => u.Id == uc.UserId).UserName,
-            FirstName = users.First(u => u.Id == uc.UserId).FirstName,
-            LastName = users.First(u => u.Id == uc.UserId).LastName,
-            Email = users.First(u => u.Id == uc.UserId).Email,
-            // Additional properties from UserCategory, e.g., CategoryIds
-            // CategoryIds = uc.Categories.Select(c => c.CategoryId.ToString()).ToList()
-        })
-        .ToList();
-
-    // Total user count
-    int usersCount = result.Count;
-
-    // You can add pagination here if needed
-    /*
-    int skip = (request.PageNumber - 1) * request.PageSize;
-    var paginatedResult = result.Skip(skip).Take(request.PageSize).ToList();
-    return new PaginationResponse<UsersOnCategoryDto>(paginatedResult, usersCount, request.PageNumber, request.PageSize);
-    */
-
-    return new PaginationResponse<UsersOnCategoryDto>(result, usersCount, request.PageNumber, request.PageSize);
-}
-
-
-
-
-
-
-
-
-public async Task<PaginationResponse<UserDetailsDto>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken)
-    {
-        var spec = new EntitiesByPaginationFilterSpec<ApplicationUser>(filter);
-
-        var users = await _userManager.Users
-            .WithSpecification(spec)
-            .ProjectToType<UserDetailsDto>()
-            .ToListAsync(cancellationToken);
-
-        int count = await _userManager.Users
-            .CountAsync(cancellationToken);
-
-        return new PaginationResponse<UserDetailsDto>(users, count, filter.PageNumber, filter.PageSize);
-    }
-
-    public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-    {
-        /*int skip = 0;
-        int pageNumber = 1;
-        int pageSize = 10;
-
-        if (request.PageNumber <= 0)
-        {
-            pageNumber = 1;
-        }
-        else
-        {
-            pageNumber = request.PageNumber;
+            return View(page);
         }
 
-        if (request.PageSize <= 0)
+
+        // Action to display the page editor
+        public IActionResult Edit(int id)
         {
-            pageSize = 10;
+            PageSections page = _context.PageSection.Find(id);
+            return View(page);
         }
-        else
+
+        // Action to save the edited page to the database
+        [HttpPost]
+        public IActionResult Edit(PageSections page)
         {
-            pageSize = request.PageSize;
-        }
-
-        if (request.PageNumber > 1)
-        {
-            skip = (pageNumber - 1) * pageSize;
-        }*/
-
-        // return query
-        //    .Take(filter.PageSize)
-        //    .OrderBy(filter.OrderBy);
-
-        var usersList =
-            await _db.UserCategory
-            .AsNoTracking()
-            .Where(x => request.CategoryIds.Contains(x.CategoryId))
-            .ProjectToType<UsersOnCategoryDto>()
-            .GroupBy(x => x.UserId)
-            .Select(x => x.First())
-            .ToListAsync(cancellationToken);
-
-        /*usersList =
-              usersList
-              .Take(pageSize)
-              .Skip(skip);*/
-
-        /*if (request.OrderBy != null)
-        {
-            if (request.OrderBy.Contains("firstname"))
+            if (ModelState.IsValid)
             {
-                usersList =
-                        usersList
-                        .Take(pageSize)
-                        .Skip(skip)
-                        .OrderBy(x => x.);
+                _context.PageSection.Update(page);
+                _context.SaveChanges();
+                Publish(page.Id);
+                return RedirectToAction("Index"); // Redirect to the page listing
             }
+            return View(page);
         }
-        else
+
+        // Action to publish the page to the file system
+        public IActionResult Publish(int id)
         {
-        }*/
+            PageSections page = _context.PageSection.Find(id);
 
-        var user = _userManager.Users.Where(x => usersList.Select(y => y.UserId).Contains(x.Id));
+            // Create an HTML file with the page content
+            string htmlContent = $@"
+       <!DOCTYPE html>
+        <html lang=""en"">
+        <head>
+            <meta charset=""UTF-8"">
+            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+            <title>Your Page Title</title>
+            <script src=""https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js""></script>
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif;
+                }}
 
-        var list = usersList.Select(x => new UsersOnCategoryDto
-        {
-            UserId = x.UserId,
-            UserName = user.Where(u => x.UserId == u.Id).Select(u => u.UserName).FirstOrDefault(),
-            FirstName = user.Where(u => x.UserId == u.Id).Select(u => u.FirstName).FirstOrDefault(),
-            LastName = user.Where(u => x.UserId == u.Id).Select(u => u.LastName).FirstOrDefault(),
-            Email = user.Where(u => x.UserId == u.Id).Select(u => u.Email).FirstOrDefault(),
-        }).ToList();
+                header, footer {{
+                    background-color: #333;
+                    color: white;
+                    text-align: center;
+                    padding: 20px;
+                }}
 
-        int usersListCount = usersList.Count();
+                section {{
+                    display: flex;
+                    justify-content: space-between;
+                }}
 
-        return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
+                aside {{
+                    width: 10%;
+                    background-color: #f2f2f2;
+                    padding: 10px;
+                }}
+
+                main {{
+                    flex: 1;
+                    padding: 210px; /* Adjusted padding for better appearance */
+                }}
+
+                #htmlEditor {{
+                    width: 100%;
+                    height: 300px;
+                }}
+            </style>
+        </head>
+        <body>
+            <header>
+
+                <h1>{page.Header}</h1>
+               
+            </header>
+
+            <section>
+                <aside>
+                    <h2>{page.Left}</h2>                  
+
+                </aside>
+
+                <main>
+                    <h2>{page.Center}</h2>
+                    <!-- Add main content here -->
+                </main>
+
+                <aside>
+                    <h2>{page.Right}</h2>                   
+                    <!-- Add right sidebar content here -->
+                </aside>
+            </section>
+
+            <footer>
+                <p>{page.Footer}</p>
+            </footer>           
+        </body>
+        </html>";
+
+
+            // Save the HTML content to a file (you might want to specify a unique file name)
+            string filePath = $"wwwroot/pages/{id}.html";
+            System.IO.File.WriteAllText(filePath, htmlContent);
+
+            return RedirectToAction("Index"); // Redirect to the page listing
+        }
     }
-
-
-
-
-
-    public async Task<PaginationResponse<UsersOnCategoryDto>> SearchCategoryUsersAsync(SearchUsersOnCategoryByCategoryIdRequest request, CancellationToken cancellationToken)
-{
-    var usersList = await _db.UserCategory
-        .AsNoTracking()
-        .Where(x => request.CategoryIds.Contains(x.CategoryId))
-        .ProjectToType<UsersOnCategoryDto>()
-        .ToListAsync(cancellationToken);
-
-    var userIds = usersList.Select(x => x.UserId).ToList();
-
-    var users = await _userManager.Users
-        .Where(x => userIds.Contains(x.Id))
-        .ToListAsync(cancellationToken);
-
-    var list = usersList.Select(x => new UsersOnCategoryDto
-    {
-        UserId = x.UserId,
-        FirstName = users.FirstOrDefault(u => u.Id == x.UserId)?.FirstName,
-        LastName = users.FirstOrDefault(u => u.Id == x.UserId)?.LastName,
-        Email = users.FirstOrDefault(u => u.Id == x.UserId)?.Email,
-    }).ToList();
-
-    int usersListCount = list.Count;
-
-    return new PaginationResponse<UsersOnCategoryDto>(list, usersListCount, request.PageNumber, request.PageSize);
 }
 
 
-
-
- select * from Exam.Language where examid ='DF86A549-1160-444F-78B4-08DBFE0466C1'
-
-  select * from Paper.Paper where examid ='DF86A549-1160-444F-78B4-08DBFE0466C1'
-
-  select * from Paper.Sections  where PaperId = '2DF83295-C5FD-4E90-4511-08DBFE0466E5'
-
-  select * from Paper.Language where PaperId = '2DF83295-C5FD-4E90-4511-08DBFE0466E5'
 
