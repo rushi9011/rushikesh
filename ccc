@@ -49,3 +49,63 @@
     }
 </body>
 </html>
+
+
+
+-------------------------------------------------------------------------------------------------
+
+@model PageSections
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Page</title>
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+</head>
+<body>
+    <h2>Create Page</h2>
+
+    @using (Html.BeginForm("Create", "PageSection", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div>
+                <label asp-for="Header"></label>
+                <input asp-for="Header" class="form-control" />
+                <span asp-validation-for="Header" class="text-danger"></span>
+            </div>
+
+            <label asp-for="Footer">Footer:</label>
+            <input asp-for="Footer" class="form-control" value="Sample Footer" />
+            <span asp-validation-for="Footer" class="text-danger"></span>
+
+            <label asp-for="Left">Left Content:</label>
+            <textarea asp-for="Left" class="form-control ckeditor">Sample Left Content</textarea>
+            <span asp-validation-for="Left" class="text-danger"></span>
+
+            <label asp-for="Right">Right Content:</label>
+            <textarea asp-for="Right" class="form-control ckeditor">Sample Right Content</textarea>
+            <span asp-validation-for="Right" class="text-danger"></span>
+
+            <label asp-for="Center">Center Content:</label>
+            <textarea asp-for="Center" class="form-control ckeditor">Sample Center Content</textarea>
+            <span asp-validation-for="Center" class="text-danger"></span>
+
+            <!-- Add similar sections for other properties: Footer, Left, Right, Center -->
+
+            <div>
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    }
+
+    <script>
+        CKEDITOR.replaceAll('ckeditor');
+    </script>
+</body>
+</html>
+
